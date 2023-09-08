@@ -34,3 +34,22 @@ _ = ax.legend(loc="lower left")
 fig.savefig("figure.svg")
 
 # %%
+import numpy as np
+from sklearn.metrics import average_precision_score
+
+print(
+    "Average precision score: \n"
+    f"{average_precision_score(y, estimator.decision_function(X))}"
+)
+
+print(
+    "Integral from the precision-recall with linear interpolation by step of 1 TP: \n"
+    f"{-np.trapz(precision, recall)}"
+)
+
+print(
+    "Integral from the precision-recall with Davis & Goadrich interpolation with "
+    f"sub-integral precision: \n{-np.trapz(precision_interp, recall_interp)}"
+)
+
+# %%
