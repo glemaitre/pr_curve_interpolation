@@ -1,3 +1,10 @@
+# %% [markdown]
+#
+# ## Synthetic example
+#
+# This example is a synthetic examples to check the potential benefit of the
+# interpolation method proposed by Davis & Goadrich [1]_.
+
 # %%
 from collections import Counter
 
@@ -30,8 +37,8 @@ PrecisionRecallDisplay.from_estimator(
     estimator, X, y, ax=ax, drawstyle="default", label="linear", linestyle="-."
 )
 ax.plot(recall_interp, precision_interp, label="davis goadrich", linestyle="--")
-_ = ax.legend(loc="lower left")
-fig.savefig("figure.svg")
+ax.legend(loc="lower left")
+fig.savefig("comparison_toy.svg")
 
 # %%
 import numpy as np
@@ -52,4 +59,43 @@ print(
     f"sub-integral precision: \n{-np.trapz(precision_interp, recall_interp)}"
 )
 
+# %% [markdown]
+#
+# ## Example from original paper
+#
+# This example reproduce the example of Fig. 6 from the original paper [1]_.
+
 # %%
+positive, negative = 433, 56_164
+recall = np.array([0, 9 / positive, 1])[::-1]
+precision = np.array([1, 1, positive / (positive + negative)])[::-1]
+
+precision_interp, recall_interp = davis_goadrich_interpolation(
+    precision, recall, positive, num=1000
+)
+
+# %%
+fig, ax = plt.subplots()
+ax.plot(
+    recall, precision, label=f"linear - AU-PRC = {-np.trapz(precision, recall):.3f}"
+)
+ax.plot(
+    recall_interp,
+    precision_interp,
+    label=(
+        "Davis & Goadrich - AU-PRC = "
+        f"{-np.trapz(precision_interp, recall_interp):.3f}"
+    ),
+)
+ax.legend()
+ax.set_title("Reproduction of Fig. 6 from Davis & Goadrich (2006)")
+fig.savefig("reproduction_figure_6.svg")
+
+# %% [markdown]
+#
+# ## References
+#
+# [1] Davis, Jesse, and Mark Goadrich.
+#     "The relationship between Precision-Recall and ROC curves."
+#     Proceedings of the 23rd international conference on Machine learning.
+#     2006.
